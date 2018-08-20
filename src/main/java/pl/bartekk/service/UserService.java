@@ -25,4 +25,9 @@ public class UserService {
     public List<User> getAllUsers() {
         return userDao.getAllUsers();
     }
+
+    public boolean removeUser(String name) {
+        userDao.removeUser(name);
+        return true;
+    }
 }

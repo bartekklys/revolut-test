@@ -50,4 +50,11 @@ public class UserController {
     public Response getAllUsers() {
         return Response.ok().entity(userService.getAllUsers()).build();
     }
+
+    @POST
+    @Path("/remove")
+    public Response removeUser(String name) {
+        userService.removeUser(name);
+        return Response.ok().build();
+    }
 }

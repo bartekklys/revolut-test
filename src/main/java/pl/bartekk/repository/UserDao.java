@@ -8,6 +8,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import pl.bartekk.exception.UserExistsException;
 import pl.bartekk.exception.UserNotFoundException;
 import pl.bartekk.model.User;
@@ -61,7 +62,6 @@ public class UserDao {
     public List<User> getAllUsers() {
         openSession();
         List list = session.createCriteria(User.class).list();
-        closeSession();
         return list;
     }
 
@@ -70,11 +70,22 @@ public class UserDao {
     }
 
     public boolean removeUser(String name) {
+        Query query = openSession().createQuery("delete User where name=:name");
+        query.setParameter("name", name);
+        query.executeUpdate();
+        return true;
+    }
+
+    /*public boolean removeUser(String name) {
         if (userRepository.containsKey(name)) {
             userRepository.remove(name);
             return true;
         } else {
             return false;
         }
+    }*/
+
+    public boolean updateUserAccountBalance() {
+        return true;
     }
 }
