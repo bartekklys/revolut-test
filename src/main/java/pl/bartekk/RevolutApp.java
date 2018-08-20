@@ -3,6 +3,8 @@ package pl.bartekk;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
+import pl.bartekk.controller.AccountController;
+import pl.bartekk.controller.UserController;
 
 /**
  * Design and implement a RESTful API (including data model and the backing implementation) for balance
@@ -32,7 +34,8 @@ public class RevolutApp extends Service<RevolutServiceConfiguration> {
     }
 
     @Override
-    public void run(RevolutServiceConfiguration revolutServiceConfiguration, Environment environment) {
-        environment.addResource(new Controller());
+    public void run(RevolutServiceConfiguration configuration, Environment environment) {
+        environment.addResource(new UserController());
+        environment.addResource(new AccountController());
     }
 }
