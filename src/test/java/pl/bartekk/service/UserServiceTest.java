@@ -11,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.bartekk.model.User;
-import pl.bartekk.repository.UserRepository;
+import pl.bartekk.repository.UserDao;
 
 public class UserServiceTest {
 
@@ -19,7 +19,7 @@ public class UserServiceTest {
     private UserService userService = UserService.getInstance();
 
     @Mock
-    private UserRepository userRepository;
+    private UserDao userDao;
 
     @BeforeMethod
     public void setUp() {
@@ -32,7 +32,7 @@ public class UserServiceTest {
         String testName = "TestName";
         User newUser = new User(testName);
         // when
-        when(userRepository.insertUser(any())).thenReturn(true);
+        when(userDao.insertUser(any())).thenReturn(true);
         // then
         assertTrue(userService.createNewUser(testName));
     }
@@ -43,7 +43,7 @@ public class UserServiceTest {
         String testUserName = "Test User";
         User testUser = new User(testUserName);
         // when
-        when(userRepository.getUser(testUserName)).thenReturn(testUser);
+        when(userDao.getUser(testUserName)).thenReturn(testUser);
         // then
         assertEquals(userService.getUser(testUserName), testUser);
     }
@@ -53,7 +53,7 @@ public class UserServiceTest {
         // given
         List<User> emptyUserList = new ArrayList<>();
         // when
-        when(userRepository.getAllUsers()).thenReturn(emptyUserList);
+        when(userDao.getAllUsers()).thenReturn(emptyUserList);
         // then
         int expectedSize = 0;
         assertEquals(userService.getAllUsers().size(), expectedSize);

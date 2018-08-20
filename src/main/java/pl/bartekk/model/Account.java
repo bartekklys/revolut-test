@@ -1,15 +1,30 @@
 package pl.bartekk.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.Getter;
 import pl.bartekk.exception.NotEnoughFundsException;
 
+@Entity
+@Table
 public class Account {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Getter
+    private long id;
+
+    @Column
     @Getter
     private String accountNumber;
 
+    @Column
     @Getter
     private BigDecimal balance;
 

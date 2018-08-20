@@ -2,11 +2,11 @@ package pl.bartekk.service;
 
 import java.util.List;
 import pl.bartekk.model.User;
-import pl.bartekk.repository.UserRepository;
+import pl.bartekk.repository.UserDao;
 
 public class UserService {
 
-    private UserRepository userRepository = UserRepository.getInstance();
+    private UserDao userDao = UserDao.getInstance();
     private static UserService instance;
 
     //create an singleton object
@@ -15,14 +15,14 @@ public class UserService {
     }
 
     public boolean createNewUser(String name) {
-        return userRepository.insertUser(new User(name));
+        return userDao.insertUser(new User(name));
     }
 
     public User getUser(String name) {
-        return userRepository.getUser(name);
+        return userDao.getUser(name);
     }
 
     public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
+        return userDao.getAllUsers();
     }
 }

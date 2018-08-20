@@ -19,6 +19,8 @@
         <testng.version>6.14.3</testng.version>
         <mockito.version>2.21.0</mockito.version>
         <assertj.version>3.10.0</assertj.version>
+        <h2.version>1.4.197</h2.version>
+        <hibernate.version>5.3.5.Final</hibernate.version>
     </properties>
 
     <build>
@@ -48,8 +50,10 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>pl.bartekk.RevolutApp</mainClass>
                                 </transformer>
                             </transformers>
@@ -91,9 +95,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.6</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
     </dependencies>
 

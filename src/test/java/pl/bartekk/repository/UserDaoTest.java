@@ -10,24 +10,24 @@ import pl.bartekk.exception.UserExistsException;
 import pl.bartekk.exception.UserNotFoundException;
 import pl.bartekk.model.User;
 
-public class UserRepositoryTest {
+public class UserDaoTest {
 
-    private UserRepository userRepository;
+    private UserDao userDao;
     private User user;
     private String testUserName = "TestUserName";
 
     @BeforeMethod
     public void setUp() {
         // given
-        userRepository = UserRepository.getInstance();
+        userDao = UserDao.getInstance();
         user = new User(testUserName);
-        userRepository.removeUser(testUserName);
+        userDao.removeUser(testUserName);
     }
 
     @Test
     public void insertUserTest() {
         // when
-        boolean result = userRepository.insertUser(user);
+        boolean result = userDao.insertUser(user);
         // then
         assertTrue(result);
     }
@@ -35,9 +35,9 @@ public class UserRepositoryTest {
     @Test
     public void removeUserTest() {
         // given
-        userRepository.insertUser(user);
+        userDao.insertUser(user);
         // when
-        boolean result = userRepository.removeUser(testUserName);
+        boolean result = userDao.removeUser(testUserName);
         // then
         assertTrue(result);
     }
@@ -45,24 +45,24 @@ public class UserRepositoryTest {
     @Test(expectedExceptions = UserExistsException.class)
     public void insertUserTest_shouldThrowExceptionWhenUserAlreadyExists() {
         // when
-        userRepository.insertUser(user);
-        boolean result = userRepository.insertUser(user);
+        userDao.insertUser(user);
+        boolean result = userDao.insertUser(user);
         // then
         assertTrue(result);
     }
 
     @Test(expectedExceptions = UserNotFoundException.class)
     public void getUserTest_shouldThrowExceptionWhenUserNotExists() {
-        userRepository.getUser("NoExists");
+        userDao.getUser("NoExists");
     }
 
     @Test
     public void getUserTest() {
         // given
         User user = new User(testUserName);
-        userRepository.insertUser(user);
+        userDao.insertUser(user);
         // when
-        User resultUser = userRepository.getUser(testUserName);
+        User resultUser = userDao.getUser(testUserName);
         // then
         assertNotNull(user);
     }
@@ -70,7 +70,7 @@ public class UserRepositoryTest {
     @Test
     public void getAllUsersTes() {
         // when
-        List<User> allUsers = userRepository.getAllUsers();
+        List<User> allUsers = userDao.getAllUsers();
         // then
         assertThat(allUsers.size()).isEqualTo(0);
     }
