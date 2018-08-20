@@ -45,8 +45,12 @@ public class AccountController {
     public Response withdraw(@QueryParam("name") String name, @QueryParam("amount") double amount) {
         User user = userService.getUser(name);
         Account account = user.getAccount();
-        account.subtractMoney(amount);
-        return Response.ok().build();
+        try {
+            account.subtractMoney(amount);
+            return Response.ok().build();
+        } catch (NotEnoughFundsException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
     }
 
     /**
