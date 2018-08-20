@@ -1,5 +1,6 @@
 package pl.bartekk.model;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.Getter;
 import pl.bartekk.exception.NotEnoughFundsException;
@@ -10,22 +11,26 @@ public class Account {
     private String accountNumber;
 
     @Getter
-    private double balance;
+    private BigDecimal balance;
 
     public Account() {
         this.accountNumber = UUID.randomUUID().toString();
-        this.balance = 0.0;
+        this.balance = BigDecimal.ZERO;
     }
 
-    public void addMoney(double amount) {
-        balance = balance + amount;
+    public void addMoney(BigDecimal amount) {
+        balance = balance.add(amount);
     }
 
-    public void subtractMoney(double amount) {
-        if (balance < amount) {
-            throw new NotEnoughFundsException("This account has not enough funds to perform this operation");
+    public void subtractMoney(BigDecimal amount) {
+        if (hasSufficientFunds(amount)) {
+            balance = balance.subtract(amount);
         } else {
-            balance = balance - amount;
+            throw new NotEnoughFundsException("This account has not enough funds to perform this operation");
         }
+    }
+
+    private boolean hasSufficientFunds(BigDecimal amount) {
+        return balance.compareTo(amount) == 1;
     }
 }

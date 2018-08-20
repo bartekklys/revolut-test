@@ -2,6 +2,7 @@ package pl.bartekk.model;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import java.math.BigDecimal;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.bartekk.exception.NotEnoughFundsException;
@@ -22,28 +23,28 @@ public class AccountTest {
 
     @Test
     public void newAccountBalanceShouldBeEqualToZeroTest() {
-        double expectedBalance = 0.0;
+        BigDecimal expectedBalance = BigDecimal.ZERO;
         assertEquals(account.getBalance(), expectedBalance);
     }
 
     @Test
     public void addMoneyTest() {
-        double expectedBalance = 10.0;
-        account.addMoney(10.0);
+        BigDecimal expectedBalance = BigDecimal.TEN;
+        account.addMoney(BigDecimal.TEN);
         assertEquals(account.getBalance(), expectedBalance);
     }
 
     @Test
     public void subtractMoney() {
-        double expectedBalance = 5.0;
-        account.addMoney(10.0);
-        account.subtractMoney(5.0);
+        BigDecimal expectedBalance = new BigDecimal(9.0);
+        account.addMoney(BigDecimal.TEN);
+        account.subtractMoney(BigDecimal.ONE);
         assertEquals(account.getBalance(), expectedBalance);
     }
 
     @Test(expectedExceptions = NotEnoughFundsException.class)
     public void shouldThrowExceptionWhenNotEnoughFunds() {
-        account.addMoney(5.0);
-        account.subtractMoney(10.0);
+        account.addMoney(BigDecimal.ONE);
+        account.subtractMoney(BigDecimal.TEN);
     }
 }

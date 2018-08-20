@@ -6,6 +6,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.math.BigDecimal;
 import pl.bartekk.exception.NotEnoughFundsException;
 import pl.bartekk.model.Account;
 import pl.bartekk.model.User;
@@ -26,7 +27,7 @@ public class AccountController {
      */
     @POST
     @Path("/deposit")
-    public Response deposit(@QueryParam("name") String name, @QueryParam("amount") double amount) {
+    public Response deposit(@QueryParam("name") String name, @QueryParam("amount") BigDecimal amount) {
         User user = userService.getUser(name);
         Account account = user.getAccount();
         account.addMoney(amount);
@@ -42,7 +43,7 @@ public class AccountController {
      */
     @POST
     @Path("/withdraw")
-    public Response withdraw(@QueryParam("name") String name, @QueryParam("amount") double amount) {
+    public Response withdraw(@QueryParam("name") String name, @QueryParam("amount") BigDecimal amount) {
         User user = userService.getUser(name);
         Account account = user.getAccount();
         try {
@@ -64,7 +65,7 @@ public class AccountController {
      */
     @POST
     @Path("/transfer")
-    public Response transferMoney(@QueryParam("from") String from, @QueryParam("to") String to, @QueryParam("amount") double amount) {
+    public Response transferMoney(@QueryParam("from") String from, @QueryParam("to") String to, @QueryParam("amount") BigDecimal amount) {
         User userFrom = userService.getUser(from);
         Account accountFrom = userFrom.getAccount();
         User userTo = userService.getUser(to);
