@@ -31,7 +31,6 @@ public class AccountTest {
     public void updateBalanceTest_deposit() {
         // given
         BigDecimal amount = BigDecimal.TEN;
-        Account account = new Account();
         // when
         account.updateBalance(amount);
         // then
@@ -42,7 +41,6 @@ public class AccountTest {
     public void updateBalanceTest_withdraw() {
         // given
         BigDecimal amount = BigDecimal.TEN;
-        Account account = new Account();
         account.updateBalance(amount);
         // when
         account.updateBalance(BigDecimal.ONE.negate());
@@ -52,8 +50,6 @@ public class AccountTest {
 
     @Test(expectedExceptions = NotEnoughFundsException.class)
     public void updateBalanceTest_withdraw_noFunds() {
-        // given
-        Account account = new Account();
         // when
         account.updateBalance(BigDecimal.TEN.negate());
     }
