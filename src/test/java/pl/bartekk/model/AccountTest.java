@@ -5,6 +5,7 @@ import static org.testng.Assert.assertNotNull;
 import java.math.BigDecimal;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import pl.bartekk.exception.NotEnoughFundsException;
 
 public class AccountTest {
 
@@ -26,24 +27,34 @@ public class AccountTest {
         assertEquals(account.getBalance(), expectedBalance);
     }
 
-    /*@Test
-    public void addMoneyTest() {
-        BigDecimal expectedBalance = BigDecimal.TEN;
-        account.addMoney(BigDecimal.TEN);
-        assertEquals(account.getBalance(), expectedBalance);
+    @Test
+    public void updateBalanceTest_deposit() {
+        // given
+        BigDecimal amount = BigDecimal.TEN;
+        Account account = new Account();
+        // when
+        account.updateBalance(amount);
+        // then
+        assertEquals(account.getBalance(), BigDecimal.TEN);
     }
 
     @Test
-    public void subtractMoney() {
-        BigDecimal expectedBalance = new BigDecimal(9.0);
-        account.addMoney(BigDecimal.TEN);
-        account.subtractMoney(BigDecimal.ONE);
-        assertEquals(account.getBalance(), expectedBalance);
+    public void updateBalanceTest_withdraw() {
+        // given
+        BigDecimal amount = BigDecimal.TEN;
+        Account account = new Account();
+        account.updateBalance(amount);
+        // when
+        account.updateBalance(BigDecimal.ONE.negate());
+        // then
+        assertEquals(account.getBalance(), new BigDecimal(9));
     }
 
     @Test(expectedExceptions = NotEnoughFundsException.class)
-    public void shouldThrowExceptionWhenNotEnoughFunds() {
-        account.addMoney(BigDecimal.ONE);
-        account.subtractMoney(BigDecimal.TEN);
-    }*/
+    public void updateBalanceTest_withdraw_noFunds() {
+        // given
+        Account account = new Account();
+        // when
+        account.updateBalance(BigDecimal.TEN.negate());
+    }
 }
