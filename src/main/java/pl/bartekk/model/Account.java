@@ -32,7 +32,7 @@ public class Account {
         this.balance = BigDecimal.ZERO;
     }
 
-    public void updateBalance(BigDecimal amount) {
+    public void updateBalance(BigDecimal amount) throws NotEnoughFundsException {
         // withdraw if amount is negative
         if (amount.compareTo(BigDecimal.ZERO) < 0) {
             if (hasSufficientFunds(amount.negate())) {

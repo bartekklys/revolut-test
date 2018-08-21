@@ -1,8 +1,10 @@
 package pl.bartekk.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 import org.mockito.InjectMocks;
@@ -21,27 +23,26 @@ public class UserServiceTest {
     @Mock
     private UserDao userDao;
 
+    private User testUser;
+    private String testUserName;
+
     @BeforeMethod
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        testUser = new User(testUserName);
+        testUserName = "TestUserName";
     }
 
     @Test
     public void createNewUserTest() {
-        // given
-        String testName = "TestName";
-        User newUser = new User(testName);
         // when
         when(userDao.insertUser(any())).thenReturn(true);
         // then
-        assertTrue(userService.createNewUser(testName));
+        assertTrue(userService.createNewUser(testUserName));
     }
 
     @Test
     public void getUserTest() {
-        // given
-        String testUserName = "Test User";
-        User testUser = new User(testUserName);
         // when
         when(userDao.getUser(testUserName)).thenReturn(testUser);
         // then
@@ -57,5 +58,14 @@ public class UserServiceTest {
         // then
         int expectedSize = 0;
         assertEquals(userService.getAllUsers().size(), expectedSize);
+    }
+
+    @Test
+    public void removeUserTest() {
+        // when
+        when(userDao.removeUser(anyString())).thenReturn(true);
+        boolean result = userService.removeUser(testUserName);
+        // then
+        assertTrue(result);
     }
 }

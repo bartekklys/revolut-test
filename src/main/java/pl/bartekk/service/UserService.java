@@ -33,8 +33,4 @@ public class UserService {
         userDao.removeUser(name);
         return true;
     }
-
-    /*public static void main(String[] args) {
-        Fairy fairy = Fairy.create();
-    }*/
 }

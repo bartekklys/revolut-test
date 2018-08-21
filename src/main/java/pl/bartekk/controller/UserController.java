@@ -35,7 +35,7 @@ public class UserController {
      * @return Response.ok() and user entity if found.
      */
     @GET
-    @Path("/details")
+    @Path("/")
     public Response getUser(@QueryParam("name") String name) {
         return Response.ok().entity(userService.getUser(name)).build();
     }

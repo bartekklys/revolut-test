@@ -44,8 +44,12 @@ public class AccountController {
     @Path("/withdraw")
     public Response withdraw(@QueryParam("name") String name, @QueryParam("amount") BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) != 0) {
-            accountService.updateBalance(name, amount.negate());
-            return Response.ok().build();
+            try {
+                accountService.updateBalance(name, amount.negate());
+                return Response.ok().build();
+            } catch (NotEnoughFundsException e) {
+                return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+            }
         }
         return Response.status(Response.Status.BAD_REQUEST).entity("Cannot withdraw 0 value.").build();
     }

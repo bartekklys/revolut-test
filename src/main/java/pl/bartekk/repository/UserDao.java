@@ -11,6 +11,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import pl.bartekk.exception.UserExistsException;
 import pl.bartekk.exception.UserNotFoundException;
 import pl.bartekk.model.Account;
@@ -39,13 +40,13 @@ public class UserDao {
         }
     }
 
-    private Session openSession() {
+    public Session openSession() {
         session = getSessionFactory().openSession();
         transaction = session.beginTransaction();
         return session;
     }
 
-    private void closeSession() {
+    public void closeSession() {
         transaction.commit();
         session.close();
     }
@@ -56,7 +57,7 @@ public class UserDao {
      * @param user instance of a persistent class {@link User}
      * @return true if user is saved successfully, false otherwise
      */
-    public boolean insertUser(User user) {
+    public boolean insertUser(User user) throws UserExistsException {
         if (!userExists(user.getName())) {
             openSession().save(new User(user.getName()));
             closeSession();
@@ -73,7 +74,10 @@ public class UserDao {
      * @return User with specified name
      */
     public User getUser(String name) {
-        Query query = openSession().createQuery("from User where name=:name");
+        if (transaction.getStatus() == TransactionStatus.NOT_ACTIVE) {
+            openSession();
+        }
+        Query query = session.createQuery("from User where name=:name");
         query.setParameter("name", name);
         Optional<User> user = query.uniqueResultOptional();
         return user.orElseThrow(() -> new UserNotFoundException("That user has not been found."));
@@ -135,11 +139,28 @@ public class UserDao {
      * @param name   name of the user on which we want to perform an operation
      * @param amount amount of the money we want to apply
      */
-    public void updateBalance(String name, BigDecimal amount) {
+    public boolean updateBalance(String name, BigDecimal amount) {
         User user = getUser(name);
         Account account = user.getAccount();
         account.updateBalance(amount);
         session.update(account);
         closeSession();
+        return true;
+    }
+
+    public void transferMoney(String from, String to, BigDecimal amount) {
+        try {
+            session = getSessionFactory().openSession();
+            transaction = session.beginTransaction();
+            updateBalance(from, amount.negate());
+            updateBalance(to, amount);
+        } catch (HibernateException e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            closeSession();
+        }
     }
 }
