@@ -9,6 +9,9 @@ public class UserService {
     private UserDao userDao = UserDao.getInstance();
     private static UserService instance;
 
+    private UserService() {
+    }
+
     //create an singleton object
     public static UserService getInstance() {
         return instance == null ? instance = new UserService() : instance;
@@ -30,4 +33,8 @@ public class UserService {
         userDao.removeUser(name);
         return true;
     }
+
+    /*public static void main(String[] args) {
+        Fairy fairy = Fairy.create();
+    }*/
 }

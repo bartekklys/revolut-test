@@ -21,6 +21,7 @@
         <assertj.version>3.10.0</assertj.version>
         <h2.version>1.4.197</h2.version>
         <hibernate.version>5.3.5.Final</hibernate.version>
+        <jfairy.version>0.6.2</jfairy.version>
     </properties>
 
     <build>
@@ -103,6 +104,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.devskiller</groupId>
+            <artifactId>jfairy</artifactId>
+            <version>${jfairy.version}</version>
         </dependency>
     </dependencies>
 

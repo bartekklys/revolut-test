@@ -8,15 +8,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.math.BigDecimal;
 import pl.bartekk.exception.NotEnoughFundsException;
-import pl.bartekk.model.Account;
-import pl.bartekk.model.User;
-import pl.bartekk.service.UserService;
+import pl.bartekk.service.AccountService;
 
 @Path("/account")
 @Produces(MediaType.APPLICATION_JSON)
 public class AccountController {
 
-    private final UserService userService = UserService.getInstance();
+    private final AccountService accountService = AccountService.getInstance();
 
     /**
      * Deposit particular amount of money to specific account.
@@ -28,10 +26,11 @@ public class AccountController {
     @POST
     @Path("/deposit")
     public Response deposit(@QueryParam("name") String name, @QueryParam("amount") BigDecimal amount) {
-        User user = userService.getUser(name);
-        Account account = user.getAccount();
-        account.addMoney(amount);
-        return Response.ok().build();
+        if (amount.compareTo(BigDecimal.ZERO) != 0) {
+            accountService.updateBalance(name, amount);
+            return Response.ok().build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity("Cannot deposit 0 value.").build();
     }
 
     /**
@@ -44,14 +43,11 @@ public class AccountController {
     @POST
     @Path("/withdraw")
     public Response withdraw(@QueryParam("name") String name, @QueryParam("amount") BigDecimal amount) {
-        User user = userService.getUser(name);
-        Account account = user.getAccount();
-        try {
-            account.subtractMoney(amount);
+        if (amount.compareTo(BigDecimal.ZERO) != 0) {
+            accountService.updateBalance(name, amount.negate());
             return Response.ok().build();
-        } catch (NotEnoughFundsException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("Cannot withdraw 0 value.").build();
     }
 
     /**
@@ -66,13 +62,8 @@ public class AccountController {
     @POST
     @Path("/transfer")
     public Response transferMoney(@QueryParam("from") String from, @QueryParam("to") String to, @QueryParam("amount") BigDecimal amount) {
-        User userFrom = userService.getUser(from);
-        Account accountFrom = userFrom.getAccount();
-        User userTo = userService.getUser(to);
-        Account accountTo = userTo.getAccount();
         try {
-            accountFrom.subtractMoney(amount);
-            accountTo.addMoney(amount);
+            accountService.transferMoney(from, to, amount);
             return Response.ok().build();
         } catch (NotEnoughFundsException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();

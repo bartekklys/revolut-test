@@ -33,19 +33,21 @@ public class Account {
         this.balance = BigDecimal.ZERO;
     }
 
-    public void addMoney(BigDecimal amount) {
-        balance = balance.add(amount);
-    }
-
-    public void subtractMoney(BigDecimal amount) {
-        if (hasSufficientFunds(amount)) {
-            balance = balance.subtract(amount);
+    public void updateBalance(BigDecimal amount) {
+        // withdraw if amount is negative
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            if (hasSufficientFunds(amount.negate())) {
+                balance = balance.add(amount);
+            } else {
+                throw new NotEnoughFundsException("This account has not enough funds to perform this operation");
+            }
         } else {
-            throw new NotEnoughFundsException("This account has not enough funds to perform this operation");
+            // deposit otherwise
+            balance = balance.add(amount);
         }
     }
 
     private boolean hasSufficientFunds(BigDecimal amount) {
-        return balance.compareTo(amount) == 1;
+        return balance.compareTo(amount) > 0;
     }
 }

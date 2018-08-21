@@ -53,7 +53,7 @@ public class UserController {
 
     @POST
     @Path("/remove")
-    public Response removeUser(String name) {
+    public Response removeUser(@QueryParam("name") String name) {
         userService.removeUser(name);
         return Response.ok().build();
     }
