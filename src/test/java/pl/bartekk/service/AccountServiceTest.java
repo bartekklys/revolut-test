@@ -1,6 +1,10 @@
 package pl.bartekk.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import java.math.BigDecimal;
@@ -9,6 +13,7 @@ import org.mockito.Mock;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import pl.bartekk.exception.NotEnoughFundsException;
 import pl.bartekk.model.User;
 import pl.bartekk.repository.UserDao;
 
@@ -36,16 +41,30 @@ public class AccountServiceTest {
         Assert.assertTrue(result);
     }
 
-    /*@Test
+    @Test
     public void transferMoneyTest() {
         // given
         String testUserName = "TestUser";
         User user = new User(testUserName);
+        BigDecimal amount = BigDecimal.TEN;
+        user.getAccount().updateBalance(amount);
         // when
         when(userDao.getUser(any())).thenReturn(user);
-        when(userDao.updateBalance(any(), any())).thenReturn(true);
-        accountService.transferMoney("from", "to", BigDecimal.TEN);
+        doNothing().when(userDao).transferMoney(any(), any(), any());
+        accountService.transferMoney("from", "to", amount);
         // then
-        // TODO: 21.08.2018
-    }*/
+        verify(userDao, times(1)).transferMoney(anyString(), anyString(), any());
+    }
+
+    @Test(expectedExceptions = NotEnoughFundsException.class)
+    public void transferMoneyTest_notEnoughFundsException() {
+        // given
+        String testUserName = "TestUser";
+        User user = new User(testUserName);
+        BigDecimal amount = BigDecimal.TEN;
+        // when
+        when(userDao.getUser(any())).thenReturn(user);
+        doNothing().when(userDao).transferMoney(any(), any(), any());
+        accountService.transferMoney("from", "to", amount);
+    }
 }

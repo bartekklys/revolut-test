@@ -69,11 +69,17 @@ public class AccountController {
     @POST
     @Path("/transfer")
     public Response transferMoney(@QueryParam("from") String from, @QueryParam("to") String to, @QueryParam("amount") BigDecimal amount) {
-        try {
-            accountService.transferMoney(from, to, amount);
-            return Response.ok().build();
-        } catch (NotEnoughFundsException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            if (from.equals(to)) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Cannot perform that operation.").build();
+            }
+            try {
+                accountService.transferMoney(from, to, amount);
+                return Response.ok().build();
+            } catch (NotEnoughFundsException e) {
+                return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+            }
         }
+        return Response.status(Response.Status.BAD_REQUEST).entity("Cannot transfer that value.").build();
     }
 }

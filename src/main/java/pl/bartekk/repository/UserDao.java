@@ -74,7 +74,7 @@ public class UserDao {
      * @return User with specified name
      */
     public User getUser(String name) {
-        if (transaction.getStatus() == TransactionStatus.NOT_ACTIVE) {
+        if (transaction == null || transaction.getStatus() != TransactionStatus.ACTIVE) {
             openSession();
         }
         Query query = session.createQuery("from User where name=:name");
@@ -148,12 +148,25 @@ public class UserDao {
         return true;
     }
 
+    /**
+     * Update two specified accounts with particular amount of money.
+     *
+     * @param from   The account from which the amount is to be deducted
+     * @param to     The account to top up
+     * @param amount value of the transaction
+     */
     public void transferMoney(String from, String to, BigDecimal amount) {
         try {
             session = getSessionFactory().openSession();
             transaction = session.beginTransaction();
-            updateBalance(from, amount.negate());
-            updateBalance(to, amount);
+            User formUser = getUser(from);
+            User toUser = getUser(to);
+            Account fromAccount = formUser.getAccount();
+            Account toAccount = toUser.getAccount();
+            fromAccount.updateBalance(amount.negate());
+            toAccount.updateBalance(amount);
+            session.update(fromAccount);
+            session.update(toAccount);
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
