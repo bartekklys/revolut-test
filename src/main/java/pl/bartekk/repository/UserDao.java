@@ -12,12 +12,16 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.bartekk.exception.UserExistsException;
 import pl.bartekk.exception.UserNotFoundException;
 import pl.bartekk.model.Account;
 import pl.bartekk.model.User;
 
 public class UserDao {
+
+    private static final Logger log = LoggerFactory.getLogger(UserDao.class);
 
     private static Session session;
     private static Transaction transaction;
@@ -35,7 +39,7 @@ public class UserDao {
         try {
             return new Configuration().configure().buildSessionFactory();
         } catch (Throwable ex) {
-            System.err.println("Failed to create sessionFactory object." + ex);
+            log.error(String.format("Failed to create sessionFactory object. %s", ex));
             throw new ExceptionInInitializerError(ex);
         }
     }
@@ -61,8 +65,10 @@ public class UserDao {
         if (!userExists(user.getName())) {
             openSession().save(new User(user.getName()));
             closeSession();
+            log.info(String.format("User %s has been successfully created.", user.getName()));
             return true;
         } else {
+            log.error(String.format("User with name %s already exists in a datastore.", user.getName()));
             throw new UserExistsException("User with that name already exists.");
         }
     }
@@ -80,6 +86,7 @@ public class UserDao {
         Query query = session.createQuery("from User where name=:name");
         query.setParameter("name", name);
         Optional<User> user = query.uniqueResultOptional();
+        log.info(String.format("Retrieved user %s", user));
         return user.orElseThrow(() -> new UserNotFoundException("That user has not been found."));
     }
 
@@ -93,6 +100,7 @@ public class UserDao {
         CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
         criteriaQuery.from(User.class);
         List<User> users = openSession().createQuery(criteriaQuery).getResultList();
+        log.info(String.format("Successfully retrieved list of %s users", users.size()));
         closeSession();
         return users;
     }
@@ -107,6 +115,7 @@ public class UserDao {
         try {
             return getUser(name) != null;
         } catch (UserNotFoundException e) {
+            log.error(String.format("User %s does not exist.", name));
             return false;
         }
     }
@@ -120,6 +129,7 @@ public class UserDao {
         User user = getUser(name);
         try {
             session.delete(user);
+            log.info(String.format("User %s has been successfully removed from datastore.", user.getName()));
             return true;
         } catch (HibernateException e) {
             if (transaction != null) {
@@ -145,6 +155,7 @@ public class UserDao {
         account.updateBalance(amount);
         session.update(account);
         closeSession();
+        log.info(String.format("Balance of user %s has been updated by amount %s.", user, amount));
         return true;
     }
 
@@ -155,18 +166,19 @@ public class UserDao {
      * @param to     The account to top up
      * @param amount value of the transaction
      */
-    public void transferMoney(String from, String to, BigDecimal amount) {
+    public void transferMoney(User fromUser, String to, BigDecimal amount) {
         try {
             session = getSessionFactory().openSession();
             transaction = session.beginTransaction();
-            User formUser = getUser(from);
             User toUser = getUser(to);
-            Account fromAccount = formUser.getAccount();
+            Account fromAccount = fromUser.getAccount();
             Account toAccount = toUser.getAccount();
             fromAccount.updateBalance(amount.negate());
             toAccount.updateBalance(amount);
             session.update(fromAccount);
             session.update(toAccount);
+            log.info(String.format("Amount %s has been succesfuuly transfered from account %s to account %s.",
+                amount, fromUser, to));
         } catch (HibernateException e) {
             if (transaction != null) {
                 transaction.rollback();
