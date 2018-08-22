@@ -14,6 +14,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import pl.bartekk.exception.NotEnoughFundsException;
+import pl.bartekk.exception.UserNotFoundException;
 import pl.bartekk.model.User;
 import pl.bartekk.repository.UserDao;
 
@@ -66,5 +67,16 @@ public class AccountServiceTest {
         when(userDao.getUser(any())).thenReturn(user);
         doNothing().when(userDao).transferMoney(any(), any(), any());
         accountService.transferMoney("from", "to", amount);
+    }
+
+    @Test
+    public void transferMoneyTest_userNotFound() {
+        // given
+        BigDecimal amount = BigDecimal.TEN;
+        // when
+        when(userDao.getUser(any())).thenThrow(UserNotFoundException.class);
+        accountService.transferMoney("from", "to", amount);
+        // then
+        verify(userDao, times(0)).transferMoney(any(), anyString(), any());
     }
 }
