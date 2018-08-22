@@ -53,7 +53,7 @@ public class AccountServiceTest {
         doNothing().when(userDao).transferMoney(any(), any(), any());
         accountService.transferMoney("from", "to", amount);
         // then
-        verify(userDao, times(1)).transferMoney(anyString(), anyString(), any());
+        verify(userDao, times(1)).transferMoney(any(), anyString(), any());
     }
 
     @Test(expectedExceptions = NotEnoughFundsException.class)
