@@ -17,41 +17,44 @@ public class AccountController {
     private final AccountService accountService = AccountService.getInstance();
 
     /**
-     * Deposit particular amount of money to specific account.
+     * Deposit particular amount of money to specified account.
      *
      * @param name   Name of the account owner.
-     * @param amount Amount of the money we want to deposit.
+     * @param amount Amount of the money to deposit.
      * @return Response.ok() after successful money deposit.
      */
     @POST
     @Path("/deposit")
     public Response deposit(@QueryParam("name") String name, @QueryParam("amount") BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) != 0) {
-            accountService.updateBalance(name, amount);
-            return Response.ok().build();
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            return updateBalance(name, amount);
         }
-        return Response.status(Response.Status.BAD_REQUEST).entity("Cannot deposit 0 value.").build();
+        return Response.status(Response.Status.BAD_REQUEST).entity("Cannot deposit that value.").build();
     }
 
     /**
-     * Withdraw particular amount of money from specific account.
+     * Withdraw particular amount of money from specified account.
      *
      * @param name   Name of the account owner.
-     * @param amount
+     * @param amount Amount of the money to withdraw.
      * @return Response.ok() after successful money withdraw.
      */
     @POST
     @Path("/withdraw")
     public Response withdraw(@QueryParam("name") String name, @QueryParam("amount") BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) != 0) {
-            try {
-                accountService.updateBalance(name, amount.negate());
-                return Response.ok().build();
-            } catch (NotEnoughFundsException e) {
-                return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-            }
+        if (amount.compareTo(BigDecimal.ZERO) > 0) {
+            return updateBalance(name, amount.negate());
         }
-        return Response.status(Response.Status.BAD_REQUEST).entity("Cannot withdraw 0 value.").build();
+        return Response.status(Response.Status.BAD_REQUEST).entity("Cannot withdraw that value.").build();
+    }
+
+    private Response updateBalance(String name, BigDecimal amount) {
+        try {
+            accountService.updateBalance(name, amount);
+            return Response.ok().build();
+        } catch (RuntimeException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
     }
 
     /**

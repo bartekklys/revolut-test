@@ -7,6 +7,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import pl.bartekk.exception.UserExistsException;
+import pl.bartekk.exception.UserNotFoundException;
 import pl.bartekk.service.UserService;
 
 @Path("/user")
@@ -24,8 +26,12 @@ public class UserController {
     @POST
     @Path("/new")
     public Response createUser(@QueryParam("name") String name) {
-        userService.createNewUser(name);
-        return Response.status(Response.Status.CREATED).build();
+        try {
+            userService.createNewUser(name);
+            return Response.status(Response.Status.CREATED).build();
+        } catch (UserExistsException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
     }
 
     /**
@@ -54,7 +60,11 @@ public class UserController {
     @POST
     @Path("/remove")
     public Response removeUser(@QueryParam("name") String name) {
-        userService.removeUser(name);
-        return Response.ok().build();
+        try {
+            userService.removeUser(name);
+            return Response.ok().build();
+        } catch (UserNotFoundException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
+        }
     }
 }
