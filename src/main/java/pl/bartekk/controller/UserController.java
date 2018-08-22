@@ -57,6 +57,12 @@ public class UserController {
         return Response.ok().entity(userService.getAllUsers()).build();
     }
 
+    /**
+     * Remove specified user from datastore.
+     *
+     * @param name name of the user to be removed
+     * @return Response.ok() if user is removed
+     */
     @POST
     @Path("/remove")
     public Response removeUser(@QueryParam("name") String name) {
