@@ -5,6 +5,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,16 +13,13 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.resource.transaction.spi.TransactionStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pl.bartekk.exception.UserExistsException;
 import pl.bartekk.exception.UserNotFoundException;
 import pl.bartekk.model.Account;
 import pl.bartekk.model.User;
 
+@Slf4j
 public class UserDao {
-
-    private static final Logger log = LoggerFactory.getLogger(UserDao.class);
 
     private static Session session;
     private static Transaction transaction;
@@ -162,7 +160,7 @@ public class UserDao {
     /**
      * Update two specified accounts with particular amount of money.
      *
-     * @param from   The account from which the amount is to be deducted
+     * @param fromUser   The user whose account should be debit
      * @param to     The account to top up
      * @param amount value of the transaction
      */

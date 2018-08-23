@@ -1,17 +1,15 @@
 package pl.bartekk.service;
 
 import java.math.BigDecimal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import pl.bartekk.exception.NotEnoughFundsException;
 import pl.bartekk.exception.UserNotFoundException;
 import pl.bartekk.model.Account;
 import pl.bartekk.model.User;
 import pl.bartekk.repository.UserDao;
 
+@Slf4j
 public class AccountService {
-
-    private static final Logger log = LoggerFactory.getLogger(AccountService.class);
 
     private UserDao userDao = UserDao.getInstance();
     private static AccountService instance;
