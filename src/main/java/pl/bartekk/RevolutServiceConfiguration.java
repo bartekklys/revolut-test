@@ -12,7 +12,7 @@ public class RevolutServiceConfiguration extends Configuration {
 
     @NotEmpty
     @JsonProperty
-    private String defaultName = "Bartek";
+    private String defaultName = "Revolut";
 
     public String getTemplate() {
         return template;
