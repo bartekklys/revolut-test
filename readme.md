@@ -1,3 +1,20 @@
+To start the app simply run this command while in project directory:
+```sh
+java -jar target/revolut-1.0-SNAPSHOT.jar server revolut.yml
+```
+
+### Libraries used
+| Library | Website |
+| ------ | ------ |
+| Dropwizard | https://www.dropwizard.io/1.3.5/docs/ |
+| H2 Database Engine | http://www.h2database.com/html/main.html |
+| Hibernate | http://hibernate.org/ |
+| sl4j | https://www.slf4j.org/ |
+| Project Lombok | https://projectlombok.org/ |
+| TestNG | https://testng.org/doc/index.html |
+| Mockito | https://site.mockito.org/ |
+| AssertJ | http://joel-costigliola.github.io/assertj/ |
+
 # Java/Scala Test
 [![N|Solid](https://dl.myket.ir/newresizing/resize/medium/png/icon/com.revolut.revolut.png)](https://nodesource.com/products/nsolid)
 
